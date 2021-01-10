@@ -1,7 +1,17 @@
 启动zk:./zookeeper-server-start.sh ../config/zookeeper.properties
 开启kafak:./kafka-server-start.sh ../config/server.properties
+bin/kafka-server-start.sh - daemon <path>/server . properties
 生产者发生消息：./kafka-console-producer.sh --broker-list localhost:9092 --topic test
 消费者消费消息:./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
 
-./kafka-producer-perf-test.sh --topic test-topic --num-records 500000 --record-size 200 --throughput -1 --producer-props bootstrap.servers=localhost:9092 acks=-1
-./kafka-consumer-perf-test.sh --broker-list localhost:9092 --messages 500000 --topic test-topic
+生产者测试：./kafka-producer-perf-test.sh --topic test-topic --num-records 500000 --record-size 200 --throughput -1 --producer-props bootstrap.servers=localhost:9092 acks=-1
+消费者测试：./kafka-consumer-perf-test.sh --broker-list localhost:9092 --messages 500000 --topic test-topic
+关闭kafka:bin/kafka-server-stop.sh
+
+创建topic:./kafka-topics.sh --create --zookeeper localhost:2181 --partitions 6 --replication-factor 3 --topic test-topic --config delete.retention.ms=259200000
+删除topic:./kafka-topics.sh --delete --zookeeper localhost:2181 --topic test-topic  注意：delete.topic.enable=true
+查询topic:./kafka-topics.sh --zookeeper localhost:2181 --list
+查看topic详情：./kafka-topics.sh --zookeeper localhost:2181 --describe --topic test
+修改topic:./kafka-topics.sh --alter --zookeeper localhost:2181 --partitions 10 --topic test-topic2
+查看消费者组：./kafka-consumer-groups.sh --bootstrap-server localhost:9092 --list
+查看消费者组详情：./kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group test-group1
